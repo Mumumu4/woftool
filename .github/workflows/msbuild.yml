@@ -45,7 +45,7 @@ jobs:
           src\dist
           !src\dist\**\*.pdb
     - name: Upload pdb
-    - uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v2.2.4
       with:
         name: ${{env.BUILD_CONFIGURATION}}_pdb_${{ matrix.platform }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
