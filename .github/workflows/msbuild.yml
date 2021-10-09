@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        platform: ['x64']
+        platform: ['x64','x86']
     steps:
     - uses: actions/checkout@v2
       with:
@@ -34,13 +34,21 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       #run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}} /p:OutDir=dist
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=${{ matrix.platform }} ${{env.SOLUTION_FILE_PATH}} /p:OutDir=dist
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         # Artifact name
-       #name: # optional, default is artifact
+        name: ${{env.BUILD_CONFIGURATION}}_${{ matrix.platform }} # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: 
+        path: |
           src\dist
-        # The desired behavior if no files are found using the provided path.
+          !src\dist\**\*.pdb
+    - name: Upload pdb
+    - uses: actions/upload-artifact@v2.2.4
+      with:
+        name: ${{env.BUILD_CONFIGURATION}}_pdb_${{ matrix.platform }} # optional, default is artifact
+        # A file, directory or wildcard pattern that describes what to upload
+        path:
+          src\dist\**\*.pdb
+
